@@ -7,7 +7,7 @@ class RollingHash {
     this.MOD = [Number(1000013), Number(5012507)]; // 2 * MOD * MOD < 1e15 - 1 since JS Number type sucks
 
     if (this.BASE.length != this.MOD.length) {
-      throw new Error("BASE and MOD doesn't have equal size");
+      throw new Error("BASE and MOD must have equal size");
     }
 
     this.nStr = str.length;
@@ -41,6 +41,7 @@ class RollingHash {
   /*
     return all the unique hash value of the substring and the position
     of the substring in the original string
+    (IMPORTANT : HEAVY, CAN'T BE USED)
   */
   hashAll() {
     let results =  {};
@@ -166,9 +167,7 @@ class DataHandler {
   }
 
   /*
-    iterate all the "unique" substring of the details field
-    rolling hash these substring and add the item correspond
-    to that substring into a map    
+    hash the detail of all items
   */
   HashData() {
     this.hashed = []; 
@@ -179,9 +178,8 @@ class DataHandler {
   }
 
   /*
-    hash the `key` string using rolling hash,
-    return an array contain items contain
-    `key` as substring, also the index what substring appear
+    return an object contains 2 array, items : {all items have key as substring}
+    and indices : {the starting index of key in an item}
   */
   searchByDetail({key}) {
     let items = [];
