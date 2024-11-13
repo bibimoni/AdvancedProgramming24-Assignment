@@ -1,4 +1,78 @@
-// an OOP class that handle all kind of data query
+
+// This was implemented by a Competitve Programmer so don't expect anything
+class RollingHash {
+  constructor({str}) {
+    // initialize value (more values -> less collision)
+    this.BASE = [31, 331];
+    this.MOD = [Number(1000013), Number(5012507)]; // 2 * MOD * MOD < 1e15 - 1 since JS Number type sucks
+
+    if (this.BASE.length != this.MOD.length) {
+      throw new Error("BASE and MOD doesn't have equal size");
+    }
+
+    this.nStr = str.length;
+    str = "#" + str;
+    this.nArgs = this.BASE.length; // number of BASE and MOD (BASE and MOD must have equal size)    
+    this.hash = new Array(this.nStr + 1);
+    this.pow = new Array(this.nStr + 1);
+    this.hash[0] = new Array(this.nArgs);
+    this.pow[0] = new Array(this.nArgs);
+
+    for (let j = 0; j < this.nArgs; j++) {
+      this.pow[0][j] = 1;
+      this.hash[0][j] = 0;
+    }
+    for (let i = 1; i <= this.nStr; i++) {
+      this.pow[i] = new Array(this.nArgs);
+      for (let j = 0; j < this.nArgs; j++) {
+        this.pow[i][j] = (this.pow[i - 1][j] * this.BASE[j]) % this.MOD[j];
+      }
+      this.hash[i] = new Array(this.nArgs);
+      for (let j = 0; j < this.nArgs; j++) {
+        this.hash[i][j] = (this.hash[i - 1][j] * this.BASE[j] + str.charCodeAt(i)) % this.MOD[j];
+      }
+    }
+  }
+
+  get size() {
+    return this.nStr;
+  }
+
+  /*
+    return all the unique hash value of the substring and the position
+    of the substring in the original string
+  */
+  hashAll() {
+    let results =  {};
+    /*{
+        hashValue_1 : [idx_1, idx_2, ...]
+        hashValue_2 : [idx_1, idx_2, idx_3, ...]
+      }*/
+    for (let i = 0; i < this.nStr; i++) {
+      for (let j = i; j < this.nStr; j++) {
+        let hashValue = this.hashForward({l : i, r : j});
+        results[hashValue] = results[hashValue] ?? [];
+        results[hashValue].push(i);
+      }
+    }
+    return results;
+  }
+
+  // return a hash value from `i` to `j` (0-indexed)
+  hashForward({l, r}) {
+    l += 1;
+    r += 1;
+    let ret = [];
+    for (let j = 0; j < this.nArgs; j++) {
+      ret.push((this.hash[r][j] - this.hash[l - 1][j] * this.pow[r - l + 1][j] + this.MOD[j] * this.MOD[j]) % this.MOD[j]);
+    }
+    return ret;
+  }
+
+  getHash() {
+    return this.hashForward({l : 0, r : this.nStr - 1});
+  }
+}
 
 /*
     "data_time" : row[0],
@@ -7,10 +81,10 @@
     "debit" : parseInt(row[3]),
     "detail" : row[4]
 */
-
+// an OOP class that handle all kind of data query
 class DataHandler {
   constructor(inputData) {
-
+    this.inputData = inputData;
     this.dateComparator = (date1, date2) => {
       const parseDate = (date) => {
         const [firstPart, _] = date.split('_');
@@ -32,6 +106,8 @@ class DataHandler {
       return num1 - num2;
     }
 
+    this.HashData();
+    
     this.data = {
       "byDate" : {}, // {date_1 : [], date_2: [], .., date_n : [] }
       "byTransNo" : {}, // {TransNo_1 : [], TransNo_2: [], .., TransNo_n : [] }
@@ -69,7 +145,7 @@ class DataHandler {
   }
 
   /*
-    return number of entrys in entry of type `type`
+    return number of entries in entry of type `type`
   */
   getSizeOfEntry({type = undefined}) {
     if (type == undefined) {
@@ -94,8 +170,12 @@ class DataHandler {
     rolling hash these substring and add the item correspond
     to that substring into a map    
   */
-  hashAll() {
-    this.hashed = {};
+  HashData() {
+    this.hashed = []; 
+    this.inputData.forEach((item, index) => {
+      let hashStr = new RollingHash({str: item.detail});
+      this.hashed.push(hashStr);
+    });
   }
 
   /*
@@ -103,8 +183,24 @@ class DataHandler {
     return an array contain items contain
     `key` as substring, also the index what substring appear
   */
-  searchByDetail(key) {
-      
+  searchByDetail({key}) {
+    let items = [];
+    let indices = [];
+    let keyHash = (new RollingHash({str : key})).getHash();
+    this.hashed.forEach((hashed, index) => {
+      let positions = [];
+      for (let i = 0; i + key.length - 1 < hashed.size; i++) {
+        if (hashed.hashForward({l : i, r : i + key.length - 1}).toString() == keyHash.toString()) {
+          positions.push(i);
+          i += key.length - 1;
+        }
+      }
+      if (positions.length != 0) {
+        items.push(this.inputData[index]);
+        indices.push(positions);
+      }
+    });
+    return {items, indices};
   }
 
   /*
@@ -123,7 +219,6 @@ class DataHandler {
     }
     let lo = 0, hi = this.keys[type].length - 1;
     let lower_bound = lo, upper_bound = hi; // the result will contains items in this range
-    console.log({from, to});
     while (lo <= hi) {
       let mid = Math.floor((lo + hi) / 2);
       // a <= b => a - b <= 0
@@ -149,7 +244,7 @@ class DataHandler {
     for (let i = lower_bound; i <= upper_bound; i++) {
       this.data[type][this.keys[type][i]].forEach(item => results.push(item));
     }
-    return results;
+    return {items : results};
   }
 
   searchByDate({from = undefined, to = undefined}) {
