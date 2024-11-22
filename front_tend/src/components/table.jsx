@@ -42,13 +42,19 @@ const StatementTable = ({ data = [] }) => {
     // Template for time column with better formatting
     const timeTemplate = (node) => {
         const [date, time] = node.data.time.split(' - ');
+        const [day, month, year] = date.split('/');
+        const fullYear = year.length === 2 ? `20${year}` : year;
+    
+        const formattedDate = `${day}/${month}/${fullYear}`;
+    
         return (
             <div className="flex flex-col">
-                <span className="font-medium text-gray-700">{date}</span>
+                <span className="font-medium text-gray-700">{formattedDate}</span>
                 <span className="text-sm text-gray-500">{time}</span>
             </div>
         );
     };
+    
 
     // Template for ID column
     const idTemplate = (node) => {
@@ -92,12 +98,12 @@ const StatementTable = ({ data = [] }) => {
                     style={{ width: '100px' }}
                     className="font-semibold text-center"
                 ></Column>
-                <Column 
+                <Column  
                     field="time" 
                     header="Thời gian" 
                     body={timeTemplate}
                     style={{ width: '200px' }}
-                    className="text-center"
+                    className="text-wrap"
                 ></Column>
                 <Column 
                     field="content" 

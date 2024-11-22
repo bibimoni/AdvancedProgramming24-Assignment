@@ -18,7 +18,7 @@ function Header() {
             </a>
             <span className="text-gray-400 mx-2">|</span>
             <a className="text-blue-700 hover:text-purple-700 block md:inline">
-              Website tra cứu
+            Website tra cứu
               <br></br>
             thông tin ủng hộ đồng bào bị thiệt hại do bão lũ
             </a>
