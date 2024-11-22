@@ -1,0 +1,82 @@
+/* Style cho dropdown container */
+.p-dropdown {
+    border-radius: 0.5rem;  /* Bo góc nhiều hơn */
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;  /* Màu viền nhẹ nhàng hơn */
+    transition: all 0.2s ease;
+    font-size: 0.875rem;  /* Giảm cỡ chữ */
+    min-height: 2.5rem;   /* Giảm chiều cao */
+}
+
+.p-dropdown:not(.p-disabled):hover {
+    border-color: #3b82f6;  /* Màu xanh hiện đại */
+}
+
+.p-dropdown:not(.p-disabled).p-focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);  /* Shadow tinh tế hơn */
+}
+
+/* Style cho dropdown panel */
+.p-dropdown-panel {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+    margin-top: 4px;
+    font-size: 0.875rem;  /* Giảm cỡ chữ */
+}
+
+/* Style cho dropdown items */
+.p-dropdown-panel .p-dropdown-items {
+    padding: 0;
+}
+
+.p-dropdown-panel .p-dropdown-item {
+    margin: 0;
+    padding: 0.5rem 0.75rem;  /* Giảm padding */
+    border-bottom: 1px solid #f1f5f9;  /* Màu đường phân cách nhẹ nhàng hơn */
+    color: #334155;  /* Màu chữ hiện đại */
+    font-weight: 400;  /* Giảm độ đậm */
+    transition: all 0.2s ease;
+    font-size: 0.875rem;  /* Giảm cỡ chữ */
+}
+
+.p-dropdown-panel .p-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+/* Hiệu ứng hover */
+.p-dropdown-panel .p-dropdown-item:hover {
+    background-color: #f8fafc;  /* Màu nền hover nhẹ nhàng */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 1;
+}
+
+.p-dropdown-panel .p-dropdown-filter-container {
+    padding: 0.4rem;  /* Giảm padding */
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.p-dropdown-panel .p-dropdown-filter {
+    padding-right: 1.5rem;
+    font-size: 0.875rem;
+}
+
+/* Style cho selected item */
+.p-dropdown .p-dropdown-label {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* Icon size */
+.p-dropdown .p-dropdown-trigger {
+    width: 2.5rem;
+}
+
+/* Placeholder style */
+.p-dropdown .p-dropdown-label.p-placeholder {
+    color: #94a3b8;  /* Màu placeholder hiện đại */
+}

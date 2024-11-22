@@ -1,0 +1,76 @@
+.p-treetable-header {
+    background: #ffffff;
+    border: none;
+    padding: 1.5rem 1rem;
+    text-align: left;
+}
+
+.p-treetable-thead > tr > th {
+    background: #f8fafc;
+    border-bottom: 1px solid #e5e7eb; /* Đường phân cách nhẹ */
+    padding: 1rem;
+    font-weight: 600;
+    color: #475569;
+    transition: background-color 0.2s;
+    
+    &:hover {
+        background: #f1f5f9;
+    }
+}
+
+.p-treetable-tbody > tr {
+    transition: background-color 0.2s;
+    
+    &:hover {
+        background-image: linear-gradient(to right, #00b4db, #0083b0);
+    }
+    
+    > td {
+        border-right: 1px solid #e5e7eb; /* Đường phân cách cột */
+        border-bottom: 1px solid #e5e7eb; /* Đường phân cách hàng */
+        padding: 1rem;
+    }
+    
+    &:last-child > td {
+        border-bottom: none; /* Không có đường phân cách ở cuối */
+    }
+    
+    &:hover > td {
+        background-color: #f8fafc;
+    }
+}
+
+.p-treetable-tbody > tr > td:last-child {
+    border-right: none; 
+}
+
+.p-dropdown {
+    border-radius: 0.375rem;
+
+    &:not(.p-disabled):hover {
+    border-color: #1d4ed8; /* Màu khi hover */
+    }
+
+    &:not(.p-disabled).p-focus {
+        border-color: #1d4ed8;
+        box-shadow: 0 0 0 3px #93c5fd;
+    }
+
+    .p-dropdown-panel {
+        background-color: rgba(255, 255, 255, 0.8); /* Màu trắng với độ trong suốt */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Đổ bóng */
+        border: 1px solid #d1d5db; /* Đường viền */
+        backdrop-filter: blur(10px); /* Làm mờ nền phía sau */
+    }
+    
+
+    .p-dropdown-item {
+        color: #1f2937; /* Màu chữ đậm hơn */
+        font-weight: 600; /* Tăng độ đậm chữ */
+    
+        &:hover {
+            background-color: #e5e7eb; /* Màu nền khi hover item */
+            color: #111827; /* Chữ đậm hơn khi hover */
+        }
+    }
+}
