@@ -5,7 +5,7 @@ import { Calendar } from 'primereact/calendar';
 import "./search.css";
 
 const SearchForm = ({ onSearch }) => {
-    const [searchType, setSearchType] = useState('transaction');
+    const [searchType, setSearchType] = useState('');
     const [searchValue, setSearchValue] = useState('');
     const [dateRange, setDateRange] = useState(null);
 
@@ -14,8 +14,7 @@ const SearchForm = ({ onSearch }) => {
         { label: 'Số tiền thu', value: 'income' },
         { label: 'Số tiền chi', value: 'outcome' },
         { label: 'Nội dung chuyển khoản', value: 'detail' },
-        { label: 'Khoảng thời gian', value: 'time' },
-        { label: 'Chọn_hình_thức_tra_cứu', value: ''}
+        { label: 'Khoảng thời gian', value: 'time' }
     ];
 
     const handleSubmit = (e) => {
@@ -35,7 +34,7 @@ const SearchForm = ({ onSearch }) => {
                     <InputText
                         value={searchValue}
                         onChange={(e) => setSearchValue(e.target.value)}
-                        className="w-full p-inputtext-sm"
+                        className="w-full"
                         placeholder="Nhập mã giao dịch"
                     />
                 )
@@ -49,6 +48,7 @@ const SearchForm = ({ onSearch }) => {
                         placeholder="Chọn khoảng thời gian"
                         dateFormat="dd/mm/yy"
                         className="w-full"
+                        panelClassName="my-calendar"
                     />
                 );
             case 'income':
@@ -58,7 +58,7 @@ const SearchForm = ({ onSearch }) => {
                         type="number"
                         value={searchValue}
                         onChange={(e) => setSearchValue(e.target.value)}
-                        className="w-full p-inputtext-sm"
+                        className="w-full"
                         placeholder={`Nhập số tiền ${searchType === 'income' ? 'thu' : 'chi'}`}
                     />
                 );
@@ -67,14 +67,14 @@ const SearchForm = ({ onSearch }) => {
                     <InputText
                         value={searchValue}
                         onChange={(e) => setSearchValue(e.target.value)}
-                        className="w-full p-inputtext-sm"
+                        className="w-full"
                         placeholder={`Nhập ${searchTypes.find(t => t.value === searchType)?.label.toLowerCase()}`}
                     />
                 );
             default:
                 return (
-                    <div className="text-gray-500 w-full p-2">
-                        Chọn hình thức tra cứu
+                    <div className="w-full h-[38px] text-sm flex items-center px-3 bg-gray-50 text-gray-500 rounded-md border border-gray-300">
+                        Vui lòng chọn hình thức tra cứu
                     </div>
                 )
         }
@@ -82,14 +82,14 @@ const SearchForm = ({ onSearch }) => {
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-6 text-center font-sans">
-                Tra cứu thông tin sao kê
+            <h2 className="text-2xl font-semibold mb-6 text-center">
+                Tra cứu thông tin lịch sử giao dịch
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <label className="block text-gray-700 font-medium mr-8">
+                        <label className="block text-gray-700 font-medium mb-1">
                             Tra cứu theo
                         </label>
                         <Dropdown
@@ -100,16 +100,16 @@ const SearchForm = ({ onSearch }) => {
                                 setSearchValue('');
                                 setDateRange(null);
                             }}
-                            className= "w-full "
-                            placeholder= "Chọn hình thức tìm kiếm"
+                            className="w-full dropdown-custom text-xl"
+                            placeholder="Chọn hình thức tra cứu"
                             filter
                             filterPlaceholder="Tìm kiếm..."
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <label className="block text-gray-700 font-medium">
-                        {searchType ? searchTypes.find(t => t.value === searchType)?.label : ''}
+                        <label className="block text-gray-700 font-medium mb-1">
+                            {searchType ? searchTypes.find(t => t.value === searchType)?.label : 'Thông tin tra cứu'}
                         </label>
                         {renderSearchInput()}
                     </div>
@@ -118,7 +118,8 @@ const SearchForm = ({ onSearch }) => {
                 <div className="pt-4">
                     <button 
                         type="submit" 
-                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 font-semibold transition-colors"
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 font-semibold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        disabled={!searchType}
                     >
                         Tra cứu
                     </button>

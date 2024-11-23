@@ -7,7 +7,7 @@ const InformationCard = ({ icon, title, amount, isNegative }) => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-400 hover:shadow-lg transition-shadow">
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                     <span className="text-gray-600">

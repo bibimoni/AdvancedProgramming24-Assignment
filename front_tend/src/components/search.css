@@ -1,20 +1,22 @@
 /* Style cho dropdown container */
 .p-dropdown {
-    border-radius: 0.5rem;  /* Bo góc nhiều hơn */
+    border-radius: 0.5rem;
     background-color: #ffffff;
-    border: 1px solid #e2e8f0;  /* Màu viền nhẹ nhàng hơn */
+    border: 1px solid #e2e8f0;
     transition: all 0.2s ease;
-    font-size: 0.875rem;  /* Giảm cỡ chữ */
-    min-height: 2.5rem;   /* Giảm chiều cao */
+    font-size: 0.875rem;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
 }
 
 .p-dropdown:not(.p-disabled):hover {
-    border-color: #3b82f6;  /* Màu xanh hiện đại */
+    border-color: #3b82f6;
 }
 
 .p-dropdown:not(.p-disabled).p-focus {
     border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);  /* Shadow tinh tế hơn */
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
 
 /* Style cho dropdown panel */
@@ -24,22 +26,17 @@
     border-radius: 0.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
     margin-top: 4px;
-    font-size: 0.875rem;  /* Giảm cỡ chữ */
-}
-
-/* Style cho dropdown items */
-.p-dropdown-panel .p-dropdown-items {
-    padding: 0;
+    font-size: 0.875rem;
 }
 
 .p-dropdown-panel .p-dropdown-item {
     margin: 0;
-    padding: 0.5rem 0.75rem;  /* Giảm padding */
-    border-bottom: 1px solid #f1f5f9;  /* Màu đường phân cách nhẹ nhàng hơn */
-    color: #334155;  /* Màu chữ hiện đại */
-    font-weight: 400;  /* Giảm độ đậm */
+    padding: 0.5rem 0.5rem;  /* Tăng padding cho items */
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
     transition: all 0.2s ease;
-    font-size: 0.875rem;  /* Giảm cỡ chữ */
+    font-size: 0.875rem;
+    border-radius: 0.4rem;
 }
 
 .p-dropdown-panel .p-dropdown-item:last-child {
@@ -48,7 +45,7 @@
 
 /* Hiệu ứng hover */
 .p-dropdown-panel .p-dropdown-item:hover {
-    background-color: #f8fafc;  /* Màu nền hover nhẹ nhàng */
+    background-color: #f8fafc;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     position: relative;
@@ -56,27 +53,79 @@
 }
 
 .p-dropdown-panel .p-dropdown-filter-container {
-    padding: 0.4rem;  /* Giảm padding */
+    padding: 0.625rem;
     border-bottom: 1px solid #f1f5f9;
 }
 
 .p-dropdown-panel .p-dropdown-filter {
-    padding-right: 1.5rem;
+    padding: 0.5rem 1rem;
     font-size: 0.875rem;
 }
 
-/* Style cho selected item */
+/* Style cho selected item và label */
 .p-dropdown .p-dropdown-label {
-    padding: 0.4rem 0.75rem;
+    padding: 0.5rem 1rem;
     font-size: 0.875rem;
+    margin: 0;
+    flex: 1;
 }
 
-/* Icon size */
+/* Icon container */
 .p-dropdown .p-dropdown-trigger {
     width: 2.5rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+
+/* Icon styling */
+.p-dropdown .p-dropdown-trigger-icon {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+.p-dropdown .p-dropdown-label.p-placeholder {
+    color: #94a3b8;
+}
+.p-dropdown, 
+.p-dropdown .p-dropdown-label, 
+.p-dropdown .p-dropdown-trigger {
+    height: 2.5rem;
+}
+.p-dropdown .p-dropdown-clear-icon {
+    padding: 0 0.5rem;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.p-dropdown.p-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+input[type="text"] {
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: 0.5px solid #e2e8f0;
+    font-size: 0.875rem;
+    box-sizing: border-box;
 }
 
 /* Placeholder style */
-.p-dropdown .p-dropdown-label.p-placeholder {
-    color: #94a3b8;  /* Màu placeholder hiện đại */
+input[type="text"]::placeholder {
+    color: #94a3b8;
+}
+
+/* Focus state cho input */
+input[type="text"]:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+/* Hover state cho input */
+input[type="text"]:hover {
+    border-color: #3b82f6;
 }

@@ -16,59 +16,102 @@ const HamburgerMenu = () => {
   ];
 
   return (
-    <div className="relative">
+    <nav className="relative">
       {/* Menu desktop */}
-      <ul className="hidden md:flex space-x-6">
+      <div className="hidden md:flex items-center space-x-4 p-2 bg-white rounded-md">
         {menuItems.map((item) => (
-          <li key={item.title}>
-            <a href={item.href} className="text-gray-700 hover:text-gray-900 hover:underline">
-              {item.title}
-            </a>
-          </li>
+          <a
+            key={item.title}
+            href={item.href}
+            className="relative text-gray-700 hover:text-blue-600 font-medium transition-all duration-200 
+            py-2 px-3 rounded-xl
+            hover:bg-blue-50 
+            hover:shadow-sm 
+            hover:-translate-y-0.5
+            before:content-['']
+            before:absolute
+            before:bottom-0
+            before:left-0
+            before:w-full
+            before:h-0.5
+            before:bg-blue-600
+            before:transform
+            before:scale-x-0
+            before:transition-transform
+            before:duration-200
+            hover:before:scale-x-100"
+          >
+            {item.title}
+          </a>
         ))}
-      </ul>
+      </div>
 
       {/* Nút menu hamburger - mobile */}
-      <button 
-        onClick={toggleMenu}
-        className="md:hidden fixed top-4 right-4 z-50 p-2 rounded-lg hover:bg-gray-100"
-        aria-label={isOpen ? "Đóng menu" : "Mở menu"}
-      >
-        {isOpen ? (
-          <X className="w-6 h-6" />
-        ) : (
-          <Menu className="w-6 h-6" />
-        )}
-      </button>
+      <div className="md:hidden">
+        <button
+          onClick={toggleMenu}
+          className="p-1.5 rounded-md bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200"
+        >
+          {isOpen ? (
+            <X className="w-5 h-5" />
+          ) : (
+            <Menu className="w-5 h-5" />
+          )}
+        </button>
+      </div>
 
       {/* Overlay làm mờ */}
-      <div 
-        className={`fixed inset-0 bg-black transition-opacity duration-300 md:hidden ${
-          isOpen ? 'opacity-50' : 'opacity-0 pointer-events-none'
-        }`}
-        onClick={toggleMenu}
-      />
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm md:hidden"
+          onClick={toggleMenu}
+        />
+      )}
 
       {/* Menu mobile */}
-      <nav 
-        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out md:hidden ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+      <div
+        className={`fixed top-0 right-0 h-full w-56 bg-white shadow-lg transform transition-transform duration-200 ease-in-out md:hidden
+        ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        <div className="flex flex-col p-6 space-y-4 mt-16">
+        <div className="flex flex-col p-4 space-y-2">
+          <div className="flex justify-end">
+            <button
+              onClick={toggleMenu}
+              className="p-1.5 rounded-md hover:bg-gray-100 transition-colors duration-200"
+            >
+              <X className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
           {menuItems.map((item) => (
-            <a 
+            <a
               key={item.title}
               href={item.href}
-              className="text-lg font-medium hover:text-blue-600 transition-colors"
+              className="text-gray-700 hover:text-blue-600 font-medium py-2 px-4 rounded-md
+              hover:bg-blue-50 transition-all duration-200
+              hover:shadow-sm
+              hover:-translate-x-0.5
+              relative
+              overflow-hidden
+              before:content-['']
+              before:absolute
+              before:bottom-0
+              before:left-0
+              before:w-full
+              before:h-0.5
+              before:bg-blue-600
+              before:transform
+              before:scale-x-0
+              before:transition-transform
+              before:duration-200
+              hover:before:scale-x-100"
               onClick={toggleMenu}
             >
               {item.title}
             </a>
           ))}
         </div>
-      </nav>
-    </div>
+      </div>
+    </nav>
   );
 };
 
