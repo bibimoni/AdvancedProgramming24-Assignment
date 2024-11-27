@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "csv": "^6.3.10",
     "express": "^4.21.1",
     "nodemon": "^3.1.7"

@@ -1,9 +1,12 @@
+const cors = require('cors');
 const express = require('express');
+
 const PORT = 8080;
 const app = express();
 const { DataHandler } = require('./processData');
 
 let dataHandler;
+app.use(cors());
 
 const apiHandler = (item) => { 
   dataHandler = new DataHandler(item);
