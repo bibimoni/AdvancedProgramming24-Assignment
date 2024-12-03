@@ -79,7 +79,7 @@ class DataHandler {
       this.data["byTransNo"][item.trans_no].push(item);
 
       this.data["byCredit"][item.credit] =
-        this.data["byCredit"][item.trans_no] ?? [];
+        this.data["byCredit"][item.credit] ?? [];
       this.data["byCredit"][item.credit].push(item);
 
       this.data["byDebit"][item.debit] = this.data["byDebit"][item.debit] ?? [];
