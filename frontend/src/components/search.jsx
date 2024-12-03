@@ -38,8 +38,8 @@ const SearchForm = ({ onSearch }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Perform full validation before submitting
+    
+        // Kiểm tra và hiển thị lỗi nếu cần
         if (startDate && endDate && startDate > endDate) {
             setErrorMessage('Ngày bắt đầu phải bé hơn ngày kết thúc.');
             return;
@@ -52,21 +52,33 @@ const SearchForm = ({ onSearch }) => {
             setErrorMessage('Vui lòng nhập giá trị cho trường tìm kiếm.');
             return;
         }
-
+    
+        // Xóa lỗi nếu không có lỗi
         setErrorMessage('');
+    
         const searchData = {};
-
+    
+        // Xử lý date range
         if (startDate && endDate) {
             searchData.dateRange = [formatDate(startDate), formatDate(endDate)];
         }
+    
         if (searchType && searchType !== 'null_but_true') {
             searchData.type = searchType;
-            searchData.value = searchValue;
+            if (['income', 'outcome', 'transaction'].includes(searchType)) {
+                searchData.value = parseInt(searchValue, 10);
+    
+                if (isNaN(searchData.value)) {
+                    setErrorMessage('Giá trị nhập vào phải là số.');
+                    return;
+                }
+            } else if (searchType === 'detail') {
+                searchData.value = searchValue.trim();
+            }
         }
-
         console.log('SearchData:', searchData);
         onSearch(searchData);
-    };
+    }
 
     const handleInputChange = (field, value) => {
         setErrorMessage('');

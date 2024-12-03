@@ -34,6 +34,8 @@ function App() {
             let response;
             let data;
             let items = [];
+            
+            console.log("Starting search with params:", searchParams);
 
             if (searchParams.dateRange && searchParams.dateRange.length === 2) {
                 url = `http://localhost:8080/item/date?from=${searchParams.dateRange[0]}&to=${searchParams.dateRange[1]}`;
@@ -46,7 +48,6 @@ function App() {
                 if (items.length === 0)
                     return;
             }
-
             if (searchParams.type && !searchParams.dateRange) {
                 if (searchParams.type === "transaction") {
                     url = `http://localhost:8080/item/transno?from=${searchParams.value}&to=${searchParams.value}`;
@@ -59,11 +60,13 @@ function App() {
                 }
     
                 // Fetch dữ liệu cho trường đơn lẻ
+                console.log("Fetching data by type:", url);
                 response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`API error: ${response.statusText}`);
                 }
                 data = await response.json();
+                console.log("Fetched data by type:", data);
                 items = Array.isArray(data) ? data : data.items || [];
             }
     
@@ -80,19 +83,19 @@ function App() {
     
                 if (searchParams.type === "transaction") {
                     items = items.filter(item =>
-                        item.trans_no && item.trans_no.toString().includes(searchParams.value)
+                        item.trans_no && item.trans_no.includes(searchParams.value)
                     );
                 } else if (searchParams.type === "income") {
                     items = items.filter(item =>
-                        item.credit && item.credit.toString().includes(searchParams.value)
+                        item.credit && item.credit === searchParams.value
                     );
                 } else if (searchParams.type === "outcome") {
                     items = items.filter(item =>
-                        item.debit && item.debit.toString().includes(searchParams.value)
+                        item.debit && item.debit === searchParams.value
                     );
                 } else if (searchParams.type === "detail") {
                     items = items.filter(item =>
-                        item.detail && item.detail.includes(searchParams.value)
+                        item.detail && item.detail.toString().includes(searchParams.value)
                     );
                 }
             }
