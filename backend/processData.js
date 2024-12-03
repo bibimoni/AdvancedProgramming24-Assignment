@@ -82,7 +82,8 @@ class DataHandler {
         this.data["byCredit"][item.credit] ?? [];
       this.data["byCredit"][item.credit].push(item);
 
-      this.data["byDebit"][item.debit] = this.data["byDebit"][item.debit] ?? [];
+      this.data["byDebit"][item.debit] = 
+        this.data["byDebit"][item.debit] ?? [];
       this.data["byDebit"][item.debit].push(item);
     });
 
@@ -94,9 +95,8 @@ class DataHandler {
       byDebit: [],
     };
 
-    this.keys["byDate"] = Object.keys(this.data["byDate"]).sort(
-      this.dateComparator
-    );
+    this.keys["byDate"] = Object.keys(this.data["byDate"])
+      .sort(this.dateComparator);
     this.keys["byTransNo"] = Object.keys(this.data["byTransNo"])
       .map(Number)
       .sort(this.intComparator); // map into number because Object.keys always return string
@@ -106,6 +106,13 @@ class DataHandler {
     this.keys["byDebit"] = Object.keys(this.data["byDebit"])
       .map(Number)
       .sort(this.intComparator);
+
+    // each element should appear no more than 1
+    this.keys["byDate"] = [... new Set(this.keys["byDate"])];
+    this.keys["byTransNo"] = [... new Set(this.keys["byTransNo"])];
+    this.keys["byCredit"] = [... new Set(this.keys["byCredit"])];
+    this.keys["byDebit"] = [... new Set(this.keys["byDebit"])];
+    
   }
 
   /*
