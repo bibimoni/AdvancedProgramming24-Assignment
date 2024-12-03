@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const HamburgerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,19 +11,19 @@ const HamburgerMenu = () => {
   };
 
   const menuItems = [
-    { title: 'Trang chủ', href: '#' },
-    { title: 'Giới thiệu', href: '#' },
-    { title: 'Liên hệ', href: '#' },
+    { title: 'Trang chủ', path: '/' },
+    { title: 'Giới thiệu', path: '/about' },
+    { title: 'Liên hệ', path: '/contact' },
   ];
 
   return (
     <nav className="relative">
       {/* Menu desktop */}
-      <div className="hidden md:flex items-center space-x-4 p-2 bg-white rounded-md">
+      <div className="hidden md:flex items-center space-x-4 p-2 bg-gray-50 rounded-md">
         {menuItems.map((item) => (
-          <a
+          <Link
             key={item.title}
-            href={item.href}
+            to={item.path}
             className="relative text-gray-700 hover:text-blue-600 font-medium transition-all duration-200 
             py-2 px-3 rounded-xl
             hover:bg-blue-50 
@@ -42,7 +43,7 @@ const HamburgerMenu = () => {
             hover:before:scale-x-100"
           >
             {item.title}
-          </a>
+          </Link>
         ))}
       </div>
 
@@ -83,9 +84,9 @@ const HamburgerMenu = () => {
             </button>
           </div>
           {menuItems.map((item) => (
-            <a
+            <Link
               key={item.title}
-              href={item.href}
+              to={item.path}
               className="text-gray-700 hover:text-blue-600 font-medium py-2 px-4 rounded-md
               hover:bg-blue-50 transition-all duration-200
               hover:shadow-sm
@@ -107,7 +108,7 @@ const HamburgerMenu = () => {
               onClick={toggleMenu}
             >
               {item.title}
-            </a>
+            </Link>
           ))}
         </div>
       </div>

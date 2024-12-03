@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// Import các thành phần
 import Header from "./components/header.jsx";
 import SearchForm from "./components/search.jsx";
 import StatementTable from "./components/table.jsx";
 import Footer from "./components/footer.jsx";
 import AccountInformation from "./components/infor.jsx";
 
-// Sample data - replace with your actual data or API call
+// Import routes
+import About from "./components/pages/About.js";
+import Contact from "./components/pages/Contact.js";
+
 const sampleData = [];
 
-// Thêm sample data cho account information
-const totalIncome = 1.35081E+11;
+const totalIncome = 1.35081e11;
 const totalExpense = -55000;
 const balance = totalIncome + totalExpense;
 
 const accountInfo = {
     totalIncome: totalIncome,
     totalExpense: totalExpense,
-    balance: balance
+    balance: balance,
 };
-
 
 function App() {
     const [statementData, setStatementData] = useState(sampleData);
@@ -26,64 +30,133 @@ function App() {
 
     const handleSearch = async (searchParams) => {
         try {
-            let url = `http://localhost:8080/item`;
-            if(searchParams.type === "transaction")
-                url += `/transno?from=${searchParams.value}&to=${searchParams.value}`
-            else if(searchParams.type === "time")
-                url += `/date?transno?from=${searchParams.dateRange[0]}&to=${searchParams.dateRange[0]}`
-            else if(searchParams.type === "income")
-                url += `/credit?from=${searchParams.value}&to=${searchParams.value}`
-            else if(searchParams.type === "outcome")
-                url += `/debit?from=${searchParams.value}&to=${searchParams.value}`
-            else if(searchParams.type === "detail")
-                url += `?key=${searchParams.value}`
-            
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            let items = searchParams.type === "detail" ? data : data.items
-            const transformedData = items.map((item, index) => ({
-                key: String(index + 1), 
-                data: {
-                    id: String(item.trans_no), 
-                    time: String(item.data_time), 
-                    content: String(item.detail), 
-                    amount: searchParams.type === "outcome"
-                        ? `- ${item.debit}`
-                        : `+ ${item.credit}`
-                }
-            }));
+            let url;
+            let response;
+            let data;
+            let items = [];
 
-            setStatementData(transformedData)
+            if (searchParams.dateRange && searchParams.dateRange.length === 2) {
+                url = `http://localhost:8080/item/date?from=${searchParams.dateRange[0]}&to=${searchParams.dateRange[1]}`;
+                response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.statusText}`);
+                }
+                data = await response.json();
+                items = data && data.items && (Array.isArray(data.items) ? data.items : []);
+                if (items.length === 0)
+                    return;
+            }
+
+            if (searchParams.type && !searchParams.dateRange) {
+                if (searchParams.type === "transaction") {
+                    url = `http://localhost:8080/item/transno?from=${searchParams.value}&to=${searchParams.value}`;
+                } else if (searchParams.type === "income") {
+                    url = `http://localhost:8080/item/credit?from=${searchParams.value}&to=${searchParams.value}`;
+                } else if (searchParams.type === "outcome") {
+                    url = `http://localhost:8080/item/debit?from=${searchParams.value}&to=${searchParams.value}`;
+                } else if (searchParams.type === "detail") {
+                    url = `http://localhost:8080/item?key=${searchParams.value}`;
+                }
+    
+                // Fetch dữ liệu cho trường đơn lẻ
+                response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.statusText}`);
+                }
+                data = await response.json();
+                items = Array.isArray(data) ? data : data.items || [];
+            }
+    
+            // Trường hợp 3: Tìm kiếm theo khoảng thời gian và trường tiếp theo
+            if (searchParams.dateRange && searchParams.dateRange.length == 2 && searchParams.type) {
+                // Tìm kiếm theo khoảng thời gian trước
+                url = `http://localhost:8080/item/date?from=${searchParams.dateRange[0]}&to=${searchParams.dateRange[1]}`;
+                response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.statusText}`);
+                }
+                data = await response.json();
+                items = Array.isArray(data) ? data : data.items || [];
+    
+                if (searchParams.type === "transaction") {
+                    items = items.filter(item =>
+                        item.trans_no && item.trans_no.toString().includes(searchParams.value)
+                    );
+                } else if (searchParams.type === "income") {
+                    items = items.filter(item =>
+                        item.credit && item.credit.toString().includes(searchParams.value)
+                    );
+                } else if (searchParams.type === "outcome") {
+                    items = items.filter(item =>
+                        item.debit && item.debit.toString().includes(searchParams.value)
+                    );
+                } else if (searchParams.type === "detail") {
+                    items = items.filter(item =>
+                        item.detail && item.detail.includes(searchParams.value)
+                    );
+                }
+            }
+            if (items.length === 0) {
+                setStatementData([]);
+                return;
+            }
+            const transformedData = items.map((item, index) => ({
+                key: String(index + 1),
+                data: {
+                    id: String(item.trans_no || ""),
+                    time: String(item.data_time || ""),
+                    content: String(item.detail || ""),
+                    amount: item.debit
+                        ? `- ${item.debit}`
+                        : item.credit
+                        ? `+ ${item.credit}`
+                        : "0",
+                },
+            }));
+            setStatementData(transformedData);
+    
         } catch (error) {
             console.error("Lỗi khi tìm kiếm:", error);
+            alert("Không thể thực hiện tìm kiếm. Vui lòng kiểm tra lại thông tin và thử lại.");
         }
-    };
-
+    };    
+    
     return (
-        <div className="min-h-screen flex flex-col">
-            <div className="w-full max-w-screen-lg mx-auto flex-grow px-4 lg:px-8">
+        <Router>
+            <div className= "min-h-screen flex flex-col bg-gradient-to-br from-blue-300 via-white to-purple-300 relative overflow-hidden">
                 <Header />
-                
-                <main className="flex-grow">
-                    <div className="mb-8">
-                        <AccountInformation 
-                            balance={accountData.balance}
-                            totalIncome={accountData.totalIncome}
-                            totalExpense={accountData.totalExpense}
-                        />
-                    </div>
 
-                    <SearchForm onSearch={handleSearch} />
-                    
-                    <section className="mt-8">
-                        <StatementTable data={statementData} />
-                    </section>
-                </main>
+                <div className="w-full max-w-screen-lg mx-auto flex-grow px-4 py-4 lg:px-8">
+                    <main className="flex-grow">
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <>
+                                        <div className="mb-4">
+                                            <AccountInformation
+                                                balance={accountData.balance}
+                                                totalIncome={accountData.totalIncome}
+                                                totalExpense={accountData.totalExpense}
+                                            />
+                                        </div>
+
+                                        <SearchForm onSearch={handleSearch} />
+
+                                        <section className="mt-4">
+                                            <StatementTable data={statementData} />
+                                        </section>
+                                    </>
+                                }
+                            />
+                            <Route path="/about" element={<About />} />
+                            <Route path="/contact" element={<Contact />} />
+                        </Routes>
+                    </main>
+                </div>
+                <Footer />
             </div>
-            
-            <Footer />
-        </div>
+        </Router>
     );
 }
 

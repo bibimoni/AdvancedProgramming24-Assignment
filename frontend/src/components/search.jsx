@@ -1,30 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
-import "./search.css";
+import './search.css';
 
 const SearchForm = ({ onSearch }) => {
     const [searchType, setSearchType] = useState('');
     const [searchValue, setSearchValue] = useState('');
-    const [dateRange, setDateRange] = useState(null);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const searchTypes = [
+        { label: 'Chọn hình thức tra cứu', value: 'null_but_true' },
         { label: 'Mã giao dịch', value: 'transaction' },
         { label: 'Số tiền thu', value: 'income' },
         { label: 'Số tiền chi', value: 'outcome' },
         { label: 'Nội dung chuyển khoản', value: 'detail' },
-        { label: 'Khoảng thời gian', value: 'time' }
     ];
 
-    const handleSubmit = (e) => {
+    const formatDate = (date) => {
+        if (!date) return null;
+        const d = new Date(date);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    // Derived state to enable/disable the submit button
+    const isSubmitDisabled = useMemo(() => {
+        if (!startDate && !endDate && !searchType) return true;
+        if (searchType && !searchValue) return true;
+        if (startDate && endDate && startDate > endDate) return true;
+        return false;
+    }, [startDate, endDate, searchType, searchValue]);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const searchData = {
-            type: searchType,
-            value: searchValue,
-            dateRange: dateRange,
-        };
+
+        // Perform full validation before submitting
+        if (startDate && endDate && startDate > endDate) {
+            setErrorMessage('Ngày bắt đầu phải bé hơn ngày kết thúc.');
+            return;
+        }
+        if (!startDate && !endDate && !searchType) {
+            setErrorMessage('Vui lòng chọn khoảng thời gian hoặc thêm trường tìm kiếm.');
+            return;
+        }
+        if (searchType && !searchValue) {
+            setErrorMessage('Vui lòng nhập giá trị cho trường tìm kiếm.');
+            return;
+        }
+
+        setErrorMessage('');
+        const searchData = {};
+
+        if (startDate && endDate) {
+            searchData.dateRange = [formatDate(startDate), formatDate(endDate)];
+        }
+        if (searchType && searchType !== 'null_but_true') {
+            searchData.type = searchType;
+            searchData.value = searchValue;
+        }
+
+        console.log('SearchData:', searchData);
         onSearch(searchData);
+    };
+
+    const handleInputChange = (field, value) => {
+        setErrorMessage('');
+        switch (field) {
+            case 'searchType':
+                setSearchType(value);
+                setSearchValue('');
+                break;
+            case 'searchValue':
+                setSearchValue(value);
+                break;
+            case 'startDate':
+                setStartDate(value);
+                break;
+            case 'endDate':
+                setEndDate(value);
+                break;
+            default:
+                break;
+        }
     };
 
     const renderSearchInput = () => {
@@ -33,22 +95,9 @@ const SearchForm = ({ onSearch }) => {
                 return (
                     <InputText
                         value={searchValue}
-                        onChange={(e) => setSearchValue(e.target.value)}
+                        onChange={(e) => handleInputChange('searchValue', e.target.value)}
                         className="w-full"
                         placeholder="Nhập mã giao dịch"
-                    />
-                )
-            case 'time':
-                return (
-                    <Calendar
-                        value={dateRange}
-                        onChange={(e) => setDateRange(e.value)}
-                        selectionMode="range"
-                        readOnlyInput
-                        placeholder="Chọn khoảng thời gian"
-                        dateFormat="dd/mm/yy"
-                        className="w-full"
-                        panelClassName="my-calendar"
                     />
                 );
             case 'income':
@@ -57,7 +106,7 @@ const SearchForm = ({ onSearch }) => {
                     <InputText
                         type="number"
                         value={searchValue}
-                        onChange={(e) => setSearchValue(e.target.value)}
+                        onChange={(e) => handleInputChange('searchValue', e.target.value)}
                         className="w-full"
                         placeholder={`Nhập số tiền ${searchType === 'income' ? 'thu' : 'chi'}`}
                     />
@@ -66,60 +115,79 @@ const SearchForm = ({ onSearch }) => {
                 return (
                     <InputText
                         value={searchValue}
-                        onChange={(e) => setSearchValue(e.target.value)}
+                        onChange={(e) => handleInputChange('searchValue', e.target.value)}
                         className="w-full"
-                        placeholder={`Nhập ${searchTypes.find(t => t.value === searchType)?.label.toLowerCase()}`}
+                        placeholder="Nhập nội dung chuyển khoản"
                     />
                 );
             default:
                 return (
                     <div className="w-full h-[38px] text-sm flex items-center px-3 bg-gray-50 text-gray-500 rounded-md border border-gray-300">
-                        Vui lòng chọn hình thức tra cứu
+                        Bạn chưa chọn hình thức tra cứu!
                     </div>
-                )
+                );
         }
     };
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-6 text-center">
+        <div className="bg-white p-6 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">
                 Tra cứu thông tin lịch sử giao dịch
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <label className="block text-gray-700 font-medium mb-1">
-                            Tra cứu theo
-                        </label>
-                        <Dropdown
-                            value={searchType}
-                            options={searchTypes}
-                            onChange={(e) => {
-                                setSearchType(e.value);
-                                setSearchValue('');
-                                setDateRange(null);
-                            }}
-                            className="w-full dropdown-custom text-xl"
-                            placeholder="Chọn hình thức tra cứu"
-                            filter
-                            filterPlaceholder="Tìm kiếm..."
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="block text-gray-700 font-medium mb-1">
-                            {searchType ? searchTypes.find(t => t.value === searchType)?.label : 'Thông tin tra cứu'}
-                        </label>
-                        {renderSearchInput()}
-                    </div>
+            {errorMessage && (
+                <div className="mb-4 text-red-600 text-center font-medium">
+                    {errorMessage}
                 </div>
+            )}
 
+            <div className="form-grid">
+                <div className="form-item">
+                    <label className="text-gray-700 font-medium text-xl">Từ ngày:</label>
+                    <Calendar
+                        value={startDate}
+                        onChange={(e) => handleInputChange('startDate', e.value)}
+                        dateFormat="dd/mm/yy"
+                        className="date-input"
+                        placeholder="Chọn ngày bắt đầu"
+                        showIcon
+                    />
+                </div>
+                <div className="form-item">
+                    <label className="text-gray-700 font-medium text-xl">Đến ngày:</label>
+                    <Calendar
+                        value={endDate}
+                        onChange={(e) => handleInputChange('endDate', e.value)}
+                        dateFormat="dd/mm/yy"
+                        className="date-input"
+                        placeholder="Chọn ngày kết thúc"
+                        showIcon
+                    />
+                </div>
+                <div className="form-item">
+                    <label className="text-gray-700 font-medium text-xl">Tra cứu theo:</label>
+                    <Dropdown
+                        value={searchType}
+                        options={searchTypes}
+                        onChange={(e) => handleInputChange('searchType', e.value)}
+                        className="w-full"
+                        placeholder="Chọn hình thức tra cứu"
+                        filter
+                        filterPlaceholder="Tìm kiếm..."
+                    />
+                </div>
+                <div className="form-item">
+                    <label className="text-gray-700 font-medium text-xl">Thông tin tra cứu:</label>
+                    {renderSearchInput()}
+                </div>
+            </div>
+
+            <form onSubmit={handleSubmit}>
                 <div className="pt-4">
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 font-semibold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                        disabled={!searchType}
+                        disabled={isSubmitDisabled}
                     >
                         Tra cứu
                     </button>

@@ -1,6 +1,5 @@
-/* Style cho dropdown container */
-.p-dropdown {
-    border-radius: 0.5rem;
+.p-dropdown, .input-container {
+    border-radius: 0.7rem;
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
     transition: all 0.2s ease;
@@ -8,6 +7,32 @@
     min-height: 2.5rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-container:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.input-container input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.875rem;
+    color: #1e293b;
+}
+
+.input-container input::placeholder {
+    color: #ffffff;
+    opacity: 1;
+}
+
+.input-container:hover {
+    border-color: #3b82f6;
 }
 
 .p-dropdown:not(.p-disabled):hover {
@@ -19,19 +44,18 @@
     box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
 
-/* Style cho dropdown panel */
 .p-dropdown-panel {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
-    margin-top: 4px;
-    font-size: 0.875rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
 }
 
 .p-dropdown-panel .p-dropdown-item {
     margin: 0;
-    padding: 0.5rem 0.5rem;  /* Tăng padding cho items */
+    padding: 0.5rem 0.5rem;
     border-bottom: 1px solid #f1f5f9;
     color: #334155;
     transition: all 0.2s ease;
@@ -43,7 +67,6 @@
     border-bottom: none;
 }
 
-/* Hiệu ứng hover */
 .p-dropdown-panel .p-dropdown-item:hover {
     background-color: #f8fafc;
     transform: translateY(-1px);
@@ -62,7 +85,6 @@
     font-size: 0.875rem;
 }
 
-/* Style cho selected item và label */
 .p-dropdown .p-dropdown-label {
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
@@ -81,12 +103,11 @@
     border-bottom-right-radius: 0.5rem;
 }
 
-/* Icon styling */
 .p-dropdown .p-dropdown-trigger-icon {
     font-size: 0.875rem;
     color: #64748b;
 }
-.p-dropdown .p-dropdown-label.p-placeholder {
+.p-dropdown .p-dropdown-label .p-placeholder {
     color: #94a3b8;
 }
 .p-dropdown, 
@@ -113,19 +134,113 @@ input[type="text"] {
     box-sizing: border-box;
 }
 
-/* Placeholder style */
 input[type="text"]::placeholder {
     color: #94a3b8;
 }
 
-/* Focus state cho input */
 input[type="text"]:focus {
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
 
-/* Hover state cho input */
 input[type="text"]:hover {
     border-color: #3b82f6;
 }
+.p-datepicker {
+    background: rgba(210, 218, 252, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.my-calendar .p-datepicker td {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    color: #334155;
+    transition: background 0.3s ease, transform 0.2s ease;
+    border-radius: 4px;
+}
+.my-calendar .p-datepicker td:hover {
+    background: rgba(159, 193, 245, 0.15);
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.my-calendar .p-datepicker td.p-highlight {
+    background: rgba(59, 130, 246, 0.3);
+    border: 1px solid rgba(59, 130, 246, 0.6);
+    color: #ffffff;
+}
+
+.my-calendar .p-datepicker-header {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    color: #1f2937;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+    border-radius: 12px 12px 0 0;
+}
+/* Định dạng bố cục 2x2 */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Label */
+.form-item label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.date-input,
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.date-input:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+button {
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+button:hover {
+    transform: scale(1.03);
+
+    background-color: #1d4ed8;
+}
+

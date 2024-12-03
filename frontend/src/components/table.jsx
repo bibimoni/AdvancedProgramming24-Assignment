@@ -6,15 +6,12 @@ import "./table.css"
 
 const StatementTable = ({ data = [] }) => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [rows] = useState(10);
+    const [rows] = useState(15);
 
-    // Tính toán tổng số trang
     const totalPages = Math.ceil(data.length / rows);
     
-    // Chỉ hiện pagination khi số lượng records vượt quá số rows trên một trang
     const showPagination = data.length > rows;
 
-    // Template for amount column with enhanced styling
     const amountTemplate = (node) => {
         const amount = node.data.amount;
         const isPositive = amount.startsWith('+');
@@ -33,7 +30,6 @@ const StatementTable = ({ data = [] }) => {
         );
     };
 
-    // Template for content column with improved formatting and hover effect
     const contentTemplate = (node) => {
         const [mainText, subText] = node.data.content.split('\n');
         return (
@@ -50,7 +46,6 @@ const StatementTable = ({ data = [] }) => {
         );
     };
 
-    // Enhanced time template with better visual hierarchy
     const timeTemplate = (node) => {
         const [date, time] = node.data.time.split(' - ');
         const [day, month, year] = date.split('/');
@@ -69,7 +64,6 @@ const StatementTable = ({ data = [] }) => {
         );
     };
 
-    // Enhanced ID template with hover effect
     const idTemplate = (node) => {
         return (
             <span className="font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200">
@@ -78,7 +72,6 @@ const StatementTable = ({ data = [] }) => {
         );
     };
 
-    // Enhanced empty message template
     const emptyMessage = () => (
         <div className="flex flex-col items-center justify-center py-12 text-gray-500">
             <i className="pi pi-search text-5xl mb-4 opacity-50"></i>
@@ -87,30 +80,43 @@ const StatementTable = ({ data = [] }) => {
         </div>
     );
 
-    // Custom Pagination Component
     const CustomPagination = () => {
-        // Tạo mảng các số trang để hiển thị
         const pageNumbers = [];
-        for (let i = 1; i <= totalPages; i++) {
+        const maxPagesToShow = 5; // Tổng số nút hiển thị (bao gồm trang hiện tại)
+    
+        const halfRange = Math.floor(maxPagesToShow / 2);
+        const startPage = Math.max(1, currentPage - halfRange); // Trang bắt đầu
+        const endPage = Math.min(totalPages, currentPage + halfRange); // Trang kết thúc
+    
+        for (let i = startPage; i <= endPage; i++) {
             pageNumbers.push(i);
         }
 
         return (
-            <div className="flex items-center justify-center gap-1 py-4">
-                <button 
+            <div className="flex items-center justify-center gap-4 py-4">
+                <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
                     className="px-3 py-1 rounded hover:bg-gray-100 disabled:opacity-50"
                 >
                     ← Prev
                 </button>
-                
+    
+                {startPage > 1 && (
+                    <button
+                        onClick={() => setCurrentPage(1)}
+                        className="px-3 py-2 rounded hover:bg-gray-100"
+                    >
+                        1
+                    </button>
+                )}
+                {startPage > 2 && <span className="px-4 ">...</span>}
                 {pageNumbers.map(number => (
                     <button
                         key={number}
                         onClick={() => setCurrentPage(number)}
                         className={classNames(
-                            'w-8 h-8 rounded-full flex items-center justify-center transition-colors',
+                            'w-12 h-12 rounded-full flex items-center justify-center',
                             {
                                 'bg-blue-500 text-white': currentPage === number,
                                 'hover:bg-gray-100': currentPage !== number
@@ -120,8 +126,18 @@ const StatementTable = ({ data = [] }) => {
                         {number}
                     </button>
                 ))}
-
-                <button 
+    
+                {endPage < totalPages - 1 && <span className="px-4">...</span>}
+                {endPage < totalPages && (
+                    <button
+                        onClick={() => setCurrentPage(totalPages)}
+                        className="mx-10 py-1 rounded hover:bg-gray-100"
+                    >
+                        {totalPages}
+                    </button>
+                )}
+    
+                <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
                     className="px-3 py-1 rounded hover:bg-gray-100 disabled:opacity-50"
@@ -130,9 +146,7 @@ const StatementTable = ({ data = [] }) => {
                 </button>
             </div>
         );
-    };
-
-    // Lấy dữ liệu cho trang hiện tại
+    };    
     const getCurrentPageData = () => {
         const start = (currentPage - 1) * rows;
         const end = start + rows;
@@ -140,12 +154,12 @@ const StatementTable = ({ data = [] }) => {
     };
 
     return (
-        <div className="card shadow-lg rounded-lg overflow-hidden bg-white border border-gray-100">
+        <div className="card shadow-lg rounded-xl overflow-hidden bg-white border border-gray-200 max-w-screen-xl mx-auto mt-6 mb-2 p-4">
             <TreeTable 
                 value={getCurrentPageData()}
                 scrollable 
-                scrollHeight="400px"
-                className="p-treetable-sm"
+                scrollHeight="500px"
+                className="p-treetable-sm w-full"
                 showGridlines
                 resizableColumns
                 columnResizeMode="expand"
@@ -155,7 +169,7 @@ const StatementTable = ({ data = [] }) => {
                     field="id" 
                     header="ID" 
                     body={idTemplate}
-                    style={{ width: '100px' }}
+                    style={{ width: '80px' }}
                     className="font-semibold text-center"
                 ></Column>
                 <Column  
@@ -169,13 +183,13 @@ const StatementTable = ({ data = [] }) => {
                     field="content" 
                     header="Nội dung" 
                     body={contentTemplate}
-                    style={{ width: '400px' }}
+                    style={{ width: '450px' }}
                 ></Column>
                 <Column 
                     field="amount" 
                     header="Số tiền" 
                     body={amountTemplate}
-                    style={{ width: '150px' }}
+                    style={{ width: '120px' }}
                     className="text-center"
                     alignHeader="center"
                 ></Column>
