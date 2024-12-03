@@ -158,6 +158,10 @@ class DataHandler {
     if (comparator(from, to) > 0) {
       return undefined;
     }
+    // out of bounds
+    if (comparator(to, this.keys[type][0]) < 0 || comparator(this.keys[type][this.keys[type].length - 1], from) < 0) {
+      return undefined;
+    }
     let lo = 0,
       hi = this.keys[type].length - 1;
     let lower_bound = lo,
