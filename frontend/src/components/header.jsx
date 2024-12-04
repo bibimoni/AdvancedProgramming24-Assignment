@@ -6,7 +6,6 @@ function Header() {
     <header className="py-1">
       <div className="bg-white shadow-lg rounded-lg px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo và tiêu đề bên trái */}
           <div className="flex items-start space-x-4">
             <img
               src="https://www.mattrancantho.vn/files/images/Logo%20-%20Icon/Logo%20MTTQ.png"

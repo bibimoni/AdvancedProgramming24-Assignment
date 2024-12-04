@@ -155,7 +155,7 @@ const SearchForm = ({ onSearch }) => {
                 );
             default:
                 return (
-                    <div className="w-full h-[38px] text-sm flex items-center px-3 bg-gray-50 text-gray-500 rounded-md border border-gray-300">
+                    <div className="w-full h-[38px] text-sm flex items-center px-3 bg-gray-50 text-gray-500 rounded-lg border-radius border-gray-300">
                         Bạn chưa chọn hình thức tra cứu!
                     </div>
                 );
@@ -216,7 +216,7 @@ const SearchForm = ({ onSearch }) => {
                 <div className="pt-4">
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 font-semibold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 font-bold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                         disabled={isSubmitDisabled}
                     >
                         Tra cứu

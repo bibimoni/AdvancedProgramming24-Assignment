@@ -1,50 +1,88 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
 
 const HamburgerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
     document.body.style.overflow = !isOpen ? 'hidden' : 'unset';
   };
 
-  const menuItems = [
-    { title: 'Trang chủ', path: '/' },
-    { title: 'Giới thiệu', path: '/about' },
-    { title: 'Liên hệ', path: '/contact' },
-  ];
+  const adminCredentials = {
+    username: 'admin',
+    password: 'admin123',
+  };
+
+  const handleLogin = () => {
+    if (username === adminCredentials.username && password === adminCredentials.password) {
+      setIsAdminLoggedIn(true);
+      setErrorMessage('');
+      toggleMenu();
+    } else {
+      setErrorMessage('Invalid username or password!');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAdminLoggedIn(false);
+    setUsername('');
+    setPassword('');
+    toggleMenu();
+  };
+
+  const menuItems = isAdminLoggedIn
+    ? [
+        { title: 'Trang chủ', path: '/' },
+        { title: 'Quản lý nội dung', path: '/edit' },
+      ]
+    : [
+        { title: 'Trang chủ', path: '/' },
+        { title: 'Giới thiệu', path: '/about' },
+        { title: 'Liên hệ', path: '/contact' },
+      ];
 
   return (
     <nav className="relative">
       {/* Menu desktop */}
-      <div className="hidden md:flex items-center space-x-4 p-2 bg-gray-50 rounded-md">
-        {menuItems.map((item) => (
-          <Link
-            key={item.title}
-            to={item.path}
-            className="relative text-gray-700 hover:text-blue-600 font-medium transition-all duration-200 
-            py-2 px-3 rounded-xl
-            hover:bg-blue-50 
-            hover:shadow-sm 
-            hover:-translate-y-0.5
-            before:content-['']
-            before:absolute
-            before:bottom-0
-            before:left-0
-            before:w-full
-            before:h-0.5
-            before:bg-blue-600
-            before:transform
-            before:scale-x-0
-            before:transition-transform
-            before:duration-200
-            hover:before:scale-x-100"
-          >
-            {item.title}
-          </Link>
-        ))}
+      <div className="hidden md:flex items-center space-x-6 p-2 bg-gray-50 rounded-md">
+        <div className="flex items-center space-x-6 ml-4"> {/* Dời menu qua trái */}
+          {menuItems.map((item) => (
+            <Link
+              key={item.title}
+              to={item.path}
+              className="relative text-gray-700 hover:text-blue-600 font-medium transition-all duration-200 
+              py-2 px-3 rounded-xl
+              hover:bg-blue-50 
+              hover:shadow-sm 
+              hover:-translate-y-0.5
+              before:content-['']
+              before:absolute
+              before:bottom-0
+              before:left-0
+              before:w-full
+              before:h-0.5
+              before:bg-blue-600
+              before:transform
+              before:scale-x-0
+              before:transition-transform
+              before:duration-200
+              hover:before:scale-x-100"
+            >
+              {item.title}
+            </Link>
+          ))}
+        </div>
+        {isAdminLoggedIn && (
+          <Button label="Logout" className="p-button-danger ml-auto" onClick={handleLogout} />
+        )}
       </div>
 
       {/* Nút menu hamburger - mobile */}
@@ -75,41 +113,65 @@ const HamburgerMenu = () => {
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <div className="flex flex-col p-4 space-y-2">
-          <div className="flex justify-end">
-            <button
-              onClick={toggleMenu}
-              className="p-1.5 rounded-md hover:bg-gray-100 transition-colors duration-200"
-            >
-              <X className="w-5 h-5 text-gray-600" />
-            </button>
-          </div>
-          {menuItems.map((item) => (
-            <Link
-              key={item.title}
-              to={item.path}
-              className="text-gray-700 hover:text-blue-600 font-medium py-2 px-4 rounded-md
-              hover:bg-blue-50 transition-all duration-200
-              hover:shadow-sm
-              hover:-translate-x-0.5
-              relative
-              overflow-hidden
-              before:content-['']
-              before:absolute
-              before:bottom-0
-              before:left-0
-              before:w-full
-              before:h-0.5
-              before:bg-blue-600
-              before:transform
-              before:scale-x-0
-              before:transition-transform
-              before:duration-200
-              hover:before:scale-x-100"
-              onClick={toggleMenu}
-            >
-              {item.title}
-            </Link>
-          ))}
+          {!isAdminLoggedIn ? (
+            <>
+              <h3 className="text-lg font-semibold">Admin Login</h3>
+              <div className="flex flex-col gap-2">
+                <InputText
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Username"
+                />
+                <InputText
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                />
+                {errorMessage && (
+                  <p className="text-red-500 text-sm">{errorMessage}</p>
+                )}
+              </div>
+              <Button label="Login" className="w-full" onClick={handleLogin} />
+            </>
+          ) : (
+            <>
+              {menuItems.map((item) => (
+                <Link
+                  key={item.title}
+                  to={item.path}
+                  className="text-gray-700 hover:text-blue-600 font-medium py-2 px-4 rounded-md
+                  hover:bg-blue-50 transition-all duration-200
+                  hover:shadow-sm
+                  hover:-translate-x-0.5
+                  relative
+                  overflow-hidden
+                  before:content-['']
+                  before:absolute
+                  before:bottom-0
+                  before:left-0
+                  before:w-full
+                  before:h-0.5
+                  before:bg-blue-600
+                  before:transform
+                  before:scale-x-0
+                  before:transition-transform
+                  before:duration-200
+                  hover:before:scale-x-100"
+                  onClick={toggleMenu}
+                >
+                  {item.title}
+                </Link>
+              ))}
+              <Button
+                label="Logout"
+                className="p-button-danger w-full mt-4"
+                onClick={handleLogout}
+              />
+            </>
+          )}
         </div>
       </div>
     </nav>

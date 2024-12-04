@@ -1,35 +1,79 @@
-import React from 'react'; 
-import { Divider } from 'primereact/divider';
+import React, { useState } from 'react'; 
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import { Message } from 'primereact/message';
 
-export default function LoginSignup() {
+export default function AdminLogin() {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    // Dummy admin credentials
+    const adminCredentials = {
+        username: 'admin',
+        password: 'admin123',
+    };
+
+    const handleLogin = () => {
+        if (username === adminCredentials.username && password === adminCredentials.password) {
+            setIsLoggedIn(true);
+            setErrorMessage('');
+        } else {
+            setErrorMessage('Invalid username or password!');
+        }
+    };
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        setUsername('');
+        setPassword('');
+    };
+
     return (
         <div className="card">
-            <div className="flex flex-column md:flex-row">
-                <div className="w-full md:w-5 flex flex-column align-items-center justify-content-center gap-3 py-5">
-                    <div className="flex flex-wrap justify-content-center align-items-center gap-2">
-                        <label className="w-6rem">Username</label>
-                        <InputText id="username" type="text" className="w-12rem" />
+            {!isLoggedIn ? (
+                <div className="flex flex-column align-items-center justify-content-center gap-3 py-5">
+                    <h2>Admin Login</h2>
+                    <div className="flex flex-column gap-2 w-20rem">
+                        <label htmlFor="username">Username</label>
+                        <InputText 
+                            id="username" 
+                            value={username} 
+                            onChange={(e) => setUsername(e.target.value)} 
+                            placeholder="Enter your username"
+                        />
                     </div>
-                    <div className="flex flex-wrap justify-content-center align-items-center gap-2">
-                        <label className="w-6rem">Password</label>
-                        <InputText id="password" type="password" className="w-12rem" />
+                    <div className="flex flex-column gap-2 w-20rem">
+                        <label htmlFor="password">Password</label>
+                        <InputText 
+                            id="password" 
+                            type="password" 
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)} 
+                            placeholder="Enter your password"
+                        />
                     </div>
-                    <Button label="Login" icon="pi pi-user" className="w-10rem mx-auto"></Button>
+                    {errorMessage && <Message severity="error" text={errorMessage} />}
+                    <Button 
+                        label="Login" 
+                        icon="pi pi-sign-in" 
+                        className="w-10rem" 
+                        onClick={handleLogin}
+                    />
                 </div>
-                <div className="w-full md:w-2">
-                    <Divider layout="vertical" className="hidden md:flex">
-                        <b>OR</b>
-                    </Divider>
-                    <Divider layout="horizontal" className="flex md:hidden" align="center">
-                        <b>OR</b>
-                    </Divider>
+            ) : (
+                <div className="flex flex-column align-items-center justify-content-center gap-3 py-5">
+                    <h2>Welcome, Admin!</h2>
+                    <p>You now have access to edit the system.</p>
+                    <Button 
+                        label="Logout" 
+                        icon="pi pi-sign-out" 
+                        className="w-10rem p-button-danger" 
+                        onClick={handleLogout}
+                    />
                 </div>
-                <div className="w-full md:w-5 flex align-items-center justify-content-center py-5">
-                    <Button label="Sign Up" icon="pi pi-user-plus" severity="success" className="w-10rem"></Button>
-                </div>
-            </div>
+            )}
         </div>
-    )
+    );
 }
