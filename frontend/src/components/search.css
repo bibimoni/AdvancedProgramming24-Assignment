@@ -1,4 +1,4 @@
-.p-dropdown, .input-container, p-inputtext {
+.p-dropdown, .input-container {
     border-radius: 0.7rem;
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
@@ -30,6 +30,13 @@
     color: #ffffff;
     opacity: 1;
 }
+.input-box {
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
 
 .input-container:hover {
     border-color: #3b82f6;
@@ -56,7 +63,7 @@
 .p-dropdown-panel .p-dropdown-item {
     margin: 0;
     padding: 0.5rem 0.5rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #969aa2;
     color: #334155;
     transition: all 0.2s ease;
     font-size: 0.875rem;
@@ -191,7 +198,7 @@ input[type="text"]:hover {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
     padding: 1rem;
-    background-color: #f9fafb;
+    background-color: #eef2f7;
     border-radius: 0.75rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -204,7 +211,7 @@ input[type="text"]:hover {
 
 /* Label */
 .form-item label {
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 500;
     color: #374151;
 }
@@ -240,7 +247,5 @@ button {
 
 button:hover {
     transform: scale(1.03);
-
     background-color: #1d4ed8;
 }
-

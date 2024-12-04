@@ -9,7 +9,12 @@ const SearchForm = ({ onSearch }) => {
     const [searchValue, setSearchValue] = useState('');
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errors, setErrors] = useState({
+        startDate: '',
+        endDate: '',
+        searchType: '',
+        searchValue: '',
+    });
 
     const searchTypes = [
         { label: 'Chọn hình thức tra cứu', value: 'null_but_true' },
@@ -28,7 +33,6 @@ const SearchForm = ({ onSearch }) => {
         return `${day}/${month}/${year}`;
     };
 
-    // Derived state to enable/disable the submit button
     const isSubmitDisabled = useMemo(() => {
         if (!startDate && !endDate && !searchType) return true;
         if (searchType && !searchValue) return true;
@@ -38,50 +42,56 @@ const SearchForm = ({ onSearch }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
-        // Kiểm tra và hiển thị lỗi nếu cần
+
+        const newErrors = {
+            startDate: '',
+            endDate: '',
+            searchType: '',
+            searchValue: '',
+        };
+
         if (startDate && endDate && startDate > endDate) {
-            setErrorMessage('Ngày bắt đầu phải bé hơn ngày kết thúc.');
-            return;
+            newErrors.startDate = 'Ngày bắt đầu phải nhỏ hơn ngày kết thúc.';
+            newErrors.endDate = 'Ngày kết thúc phải lớn hơn ngày bắt đầu.';
         }
+
         if (!startDate && !endDate && !searchType) {
-            setErrorMessage('Vui lòng chọn khoảng thời gian hoặc thêm trường tìm kiếm.');
-            return;
+            newErrors.startDate = 'Vui lòng chọn ngày bắt đầu.';
+            newErrors.endDate = 'Vui lòng chọn ngày kết thúc.';
+            newErrors.searchType = 'Vui lòng chọn hình thức tra cứu.';
         }
+
         if (searchType && !searchValue) {
-            setErrorMessage('Vui lòng nhập giá trị cho trường tìm kiếm.');
+            newErrors.searchValue = 'Vui lòng nhập giá trị cho trường tìm kiếm.';
+        }
+
+        if (['income', 'outcome', 'transaction'].includes(searchType) && isNaN(searchValue)) {
+            newErrors.searchValue = 'Giá trị nhập vào phải là số.';
+        }
+
+        if (Object.values(newErrors).some((error) => error)) {
+            setErrors(newErrors);
             return;
         }
-    
-        // Xóa lỗi nếu không có lỗi
-        setErrorMessage('');
-    
+
+        setErrors({});
         const searchData = {};
-    
-        // Xử lý date range
+
         if (startDate && endDate) {
             searchData.dateRange = [formatDate(startDate), formatDate(endDate)];
         }
-    
+
         if (searchType && searchType !== 'null_but_true') {
             searchData.type = searchType;
-            if (['income', 'outcome', 'transaction'].includes(searchType)) {
-                searchData.value = parseInt(searchValue, 10);
-    
-                if (isNaN(searchData.value)) {
-                    setErrorMessage('Giá trị nhập vào phải là số.');
-                    return;
-                }
-            } else if (searchType === 'detail') {
-                searchData.value = searchValue.trim();
-            }
+            searchData.value = searchType === 'detail' ? searchValue.trim() : parseInt(searchValue, 10);
         }
+
         console.log('SearchData:', searchData);
         onSearch(searchData);
-    }
+    };
 
     const handleInputChange = (field, value) => {
-        setErrorMessage('');
+        setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
         switch (field) {
             case 'searchType':
                 setSearchType(value);
@@ -102,35 +112,46 @@ const SearchForm = ({ onSearch }) => {
     };
 
     const renderSearchInput = () => {
+        const isError = !!errors.searchValue;
+
         switch (searchType) {
             case 'transaction':
                 return (
-                    <InputText
-                        value={searchValue}
-                        onChange={(e) => handleInputChange('searchValue', e.target.value)}
-                        className="w-full"
-                        placeholder="Nhập mã giao dịch"
-                    />
+                    <>
+                        <InputText
+                            value={searchValue}
+                            onChange={(e) => handleInputChange('searchValue', e.target.value)}
+                            className={`input-box ${isError ? 'input-error' : ''}`}
+                            placeholder="Nhập mã giao dịch"
+                        />
+                        {isError && <small className="text-red-500">{errors.searchValue}</small>}
+                    </>
                 );
             case 'income':
             case 'outcome':
                 return (
-                    <InputText
-                        type="number"
-                        value={searchValue}
-                        onChange={(e) => handleInputChange('searchValue', e.target.value)}
-                        className="w-full"
-                        placeholder={`Nhập số tiền ${searchType === 'income' ? 'thu' : 'chi'}`}
-                    />
+                    <>
+                        <InputText
+                            type="number"
+                            value={searchValue}
+                            onChange={(e) => handleInputChange('searchValue', e.target.value)}
+                            className={`input-box ${isError ? 'input-error' : ''}`}
+                            placeholder={`Nhập số tiền ${searchType === 'income' ? 'thu' : 'chi'}`}
+                        />
+                        {isError && <small className="text-red-500">{errors.searchValue}</small>}
+                    </>
                 );
             case 'detail':
                 return (
-                    <InputText
-                        value={searchValue}
-                        onChange={(e) => handleInputChange('searchValue', e.target.value)}
-                        className="w-full"
-                        placeholder="Nhập nội dung chuyển khoản"
-                    />
+                    <>
+                        <InputText
+                            value={searchValue}
+                            onChange={(e) => handleInputChange('searchValue', e.target.value)}
+                            className={`input-box ${isError ? 'input-error' : ''}`}
+                            placeholder="Nhập nội dung chuyển khoản"
+                        />
+                        {isError && <small className="text-red-500">{errors.searchValue}</small>}
+                    </>
                 );
             default:
                 return (
@@ -143,53 +164,50 @@ const SearchForm = ({ onSearch }) => {
 
     return (
         <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">
+            <h2 className="text-3xl font-bold mb-6 text-center text-gray-700">
                 Tra cứu thông tin lịch sử giao dịch
             </h2>
 
-            {errorMessage && (
-                <div className="mb-4 text-red-600 text-center font-medium">
-                    {errorMessage}
-                </div>
-            )}
-
             <div className="form-grid">
                 <div className="form-item">
-                    <label className="text-gray-700 font-medium text-xl">Từ ngày</label>
+                    <label className="heading-text">Từ ngày</label>
                     <Calendar
                         value={startDate}
                         onChange={(e) => handleInputChange('startDate', e.value)}
                         dateFormat="dd/mm/yy"
-                        className="date-input"
+                        className={`date-input ${errors.startDate ? 'input-error' : ''}`}
                         placeholder="Chọn ngày bắt đầu"
                         showIcon
                     />
+                    {errors.startDate && <small className="text-red-500">{errors.startDate}</small>}
                 </div>
                 <div className="form-item">
-                    <label className="text-gray-700 font-medium text-xl">Đến ngày</label>
+                    <label className="heading-text">Đến ngày</label>
                     <Calendar
                         value={endDate}
                         onChange={(e) => handleInputChange('endDate', e.value)}
                         dateFormat="dd/mm/yy"
-                        className="date-input"
+                        className={`date-input ${errors.endDate ? 'input-error' : ''}`}
                         placeholder="Chọn ngày kết thúc"
                         showIcon
                     />
+                    {errors.endDate && <small className="text-red-500">{errors.endDate}</small>}
                 </div>
                 <div className="form-item">
-                    <label className="text-gray-700 font-medium text-xl">Tra cứu theo</label>
+                    <label className="heading-text">Tra cứu theo</label>
                     <Dropdown
                         value={searchType}
                         options={searchTypes}
                         onChange={(e) => handleInputChange('searchType', e.value)}
-                        className="w-full"
+                        className={`w-full ${errors.searchType ? 'input-error' : ''}`}
                         placeholder="Chọn hình thức tra cứu"
                         filter
                         filterPlaceholder="Tìm kiếm..."
                     />
+                    {errors.searchType && <small className="text-red-500">{errors.searchType}</small>}
                 </div>
                 <div className="form-item">
-                    <label className="text-gray-700 font-medium text-xl">Thông tin tra cứu</label>
+                    <label className="heading-text">Thông tin tra cứu</label>
                     {renderSearchInput()}
                 </div>
             </div>
