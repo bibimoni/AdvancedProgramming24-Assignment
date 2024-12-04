@@ -155,7 +155,7 @@ const SearchForm = ({ onSearch }) => {
 
             <div className="form-grid">
                 <div className="form-item">
-                    <label className="text-gray-700 font-medium text-xl">Từ ngày:</label>
+                    <label className="text-gray-700 font-medium text-xl">Từ ngày</label>
                     <Calendar
                         value={startDate}
                         onChange={(e) => handleInputChange('startDate', e.value)}
@@ -166,7 +166,7 @@ const SearchForm = ({ onSearch }) => {
                     />
                 </div>
                 <div className="form-item">
-                    <label className="text-gray-700 font-medium text-xl">Đến ngày:</label>
+                    <label className="text-gray-700 font-medium text-xl">Đến ngày</label>
                     <Calendar
                         value={endDate}
                         onChange={(e) => handleInputChange('endDate', e.value)}
@@ -177,7 +177,7 @@ const SearchForm = ({ onSearch }) => {
                     />
                 </div>
                 <div className="form-item">
-                    <label className="text-gray-700 font-medium text-xl">Tra cứu theo:</label>
+                    <label className="text-gray-700 font-medium text-xl">Tra cứu theo</label>
                     <Dropdown
                         value={searchType}
                         options={searchTypes}
@@ -189,7 +189,7 @@ const SearchForm = ({ onSearch }) => {
                     />
                 </div>
                 <div className="form-item">
-                    <label className="text-gray-700 font-medium text-xl">Thông tin tra cứu:</label>
+                    <label className="text-gray-700 font-medium text-xl">Thông tin tra cứu</label>
                     {renderSearchInput()}
                 </div>
             </div>
