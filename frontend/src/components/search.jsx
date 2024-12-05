@@ -1,34 +1,33 @@
-import React, { useState, useMemo } from 'react';
-import { Dropdown } from 'primereact/dropdown';
-import { InputText } from 'primereact/inputtext';
-import { Calendar } from 'primereact/calendar';
-import './search.css';
+import React, { useState, useMemo } from "react";
+import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
+import { Calendar } from "primereact/calendar";
+import "./search.css";
 
-const SearchForm = ({ onSearch }) => {
-    const [searchType, setSearchType] = useState('');
-    const [searchValue, setSearchValue] = useState('');
+const SearchForm = ({ onSearch, showNotification }) => {
+    const [searchType, setSearchType] = useState("");
+    const [searchValue, setSearchValue] = useState("");
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [errors, setErrors] = useState({
-        startDate: '',
-        endDate: '',
-        searchType: '',
-        searchValue: '',
+        startDate: "",
+        endDate: "",
+        searchType: "",
+        searchValue: "",
     });
 
     const searchTypes = [
-        { label: 'Chọn hình thức tra cứu', value: 'null_but_true' },
-        { label: 'Mã giao dịch', value: 'transaction' },
-        { label: 'Số tiền thu', value: 'income' },
-        { label: 'Số tiền chi', value: 'outcome' },
-        { label: 'Nội dung chuyển khoản', value: 'detail' },
+        { label: "Mã giao dịch", value: "transaction" },
+        { label: "Số tiền thu", value: "income" },
+        { label: "Số tiền chi", value: "outcome" },
+        { label: "Nội dung chuyển khoản", value: "detail" },
     ];
 
     const formatDate = (date) => {
         if (!date) return null;
         const d = new Date(date);
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, "0");
+        const month = String(d.getMonth() + 1).padStart(2, "0");
         const year = d.getFullYear();
         return `${day}/${month}/${year}`;
     };
@@ -42,68 +41,61 @@ const SearchForm = ({ onSearch }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const newErrors = {
-            startDate: '',
-            endDate: '',
-            searchType: '',
-            searchValue: '',
+            startDate: "",
+            endDate: "",
+            searchType: "",
+            searchValue: "",
         };
-
         if (startDate && endDate && startDate > endDate) {
-            newErrors.startDate = 'Ngày bắt đầu phải nhỏ hơn ngày kết thúc.';
-            newErrors.endDate = 'Ngày kết thúc phải lớn hơn ngày bắt đầu.';
+            newErrors.startDate = "Ngày bắt đầu phải nhỏ hơn ngày kết thúc.";
+            newErrors.endDate = "Ngày kết thúc phải lớn hơn ngày bắt đầu.";
         }
-
-        if (!startDate && !endDate && !searchType) {
-            newErrors.startDate = 'Vui lòng chọn ngày bắt đầu.';
-            newErrors.endDate = 'Vui lòng chọn ngày kết thúc.';
-            newErrors.searchType = 'Vui lòng chọn hình thức tra cứu.';
-        }
-
         if (searchType && !searchValue) {
-            newErrors.searchValue = 'Vui lòng nhập giá trị cho trường tìm kiếm.';
+            newErrors.searchValue = "Vui lòng nhập giá trị cho trường tìm kiếm.";
         }
-
-        if (['income', 'outcome', 'transaction'].includes(searchType) && isNaN(searchValue)) {
-            newErrors.searchValue = 'Giá trị nhập vào phải là số.';
+        if (
+            ["income", "outcome", "transaction"].includes(searchType) &&
+            isNaN(searchValue)
+        ) {
+            newErrors.searchValue = "Giá trị nhập vào phải là số.";
         }
-
         if (Object.values(newErrors).some((error) => error)) {
             setErrors(newErrors);
+            const errorMessages = Object.values(newErrors)
+                .filter((err) => err)
+                .join(" ");
+            if (typeof showNotification === "function") {
+                showNotification(errorMessages, "error");
+            }
             return;
         }
-
         setErrors({});
         const searchData = {};
-
         if (startDate && endDate) {
             searchData.dateRange = [formatDate(startDate), formatDate(endDate)];
         }
-
-        if (searchType && searchType !== 'null_but_true') {
+        if (searchType) {
             searchData.type = searchType;
-            searchData.value = searchType === 'detail' ? searchValue.trim() : parseInt(searchValue, 10);
+            searchData.value =
+                searchType === "detail" ? searchValue.trim() : parseInt(searchValue, 10);
         }
-
-        console.log('SearchData:', searchData);
         onSearch(searchData);
     };
 
     const handleInputChange = (field, value) => {
-        setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
+        setErrors((prevErrors) => ({ ...prevErrors, [field]: "" }));
         switch (field) {
-            case 'searchType':
+            case "searchType":
                 setSearchType(value);
-                setSearchValue('');
                 break;
-            case 'searchValue':
+            case "searchValue":
                 setSearchValue(value);
                 break;
-            case 'startDate':
+            case "startDate":
                 setStartDate(value);
                 break;
-            case 'endDate':
+            case "endDate":
                 setEndDate(value);
                 break;
             default:
@@ -113,45 +105,43 @@ const SearchForm = ({ onSearch }) => {
 
     const renderSearchInput = () => {
         const isError = !!errors.searchValue;
-
         switch (searchType) {
-            case 'transaction':
+            case "transaction":
                 return (
-                    <>
-                        <InputText
-                            value={searchValue}
-                            onChange={(e) => handleInputChange('searchValue', e.target.value)}
-                            className={`input-box ${isError ? 'input-error' : ''}`}
-                            placeholder="Nhập mã giao dịch"
-                        />
-                        {isError && <small className="text-red-500">{errors.searchValue}</small>}
-                    </>
+                    <InputText
+                        value={searchValue}
+                        onChange={(e) =>
+                            handleInputChange("searchValue", e.target.value)
+                        }
+                        className={`input-box ${isError ? "input-error" : ""}`}
+                        placeholder="Nhập mã giao dịch"
+                    />
                 );
-            case 'income':
-            case 'outcome':
+            case "income":
+            case "outcome":
                 return (
-                    <>
-                        <InputText
-                            type="number"
-                            value={searchValue}
-                            onChange={(e) => handleInputChange('searchValue', e.target.value)}
-                            className={`input-box ${isError ? 'input-error' : ''}`}
-                            placeholder={`Nhập số tiền ${searchType === 'income' ? 'thu' : 'chi'}`}
-                        />
-                        {isError && <small className="text-red-500">{errors.searchValue}</small>}
-                    </>
+                    <InputText
+                        type="number"
+                        value={searchValue}
+                        onChange={(e) =>
+                            handleInputChange("searchValue", e.target.value)
+                        }
+                        className={`input-box ${isError ? "input-error" : ""}`}
+                        placeholder={`Nhập số tiền ${
+                            searchType === "income" ? "thu" : "chi"
+                        }`}
+                    />
                 );
-            case 'detail':
+            case "detail":
                 return (
-                    <>
-                        <InputText
-                            value={searchValue}
-                            onChange={(e) => handleInputChange('searchValue', e.target.value)}
-                            className={`input-box ${isError ? 'input-error' : ''}`}
-                            placeholder="Nhập nội dung chuyển khoản"
-                        />
-                        {isError && <small className="text-red-500">{errors.searchValue}</small>}
-                    </>
+                    <InputText
+                        value={searchValue}
+                        onChange={(e) =>
+                            handleInputChange("searchValue", e.target.value)
+                        }
+                        className={`input-box ${isError ? "input-error" : ""}`}
+                        placeholder="Nhập nội dung chuyển khoản"
+                    />
                 );
             default:
                 return (
@@ -167,51 +157,52 @@ const SearchForm = ({ onSearch }) => {
             <h2 className="text-3xl font-bold mb-6 text-center text-gray-700">
                 Tra cứu thông tin lịch sử giao dịch
             </h2>
-
             <div className="form-grid">
                 <div className="form-item">
                     <label className="heading-text">Từ ngày</label>
                     <Calendar
                         value={startDate}
-                        onChange={(e) => handleInputChange('startDate', e.value)}
+                        onChange={(e) => handleInputChange("startDate", e.value)}
                         dateFormat="dd/mm/yy"
-                        className={`date-input ${errors.startDate ? 'input-error' : ''}`}
+                        className={`date-input ${
+                            errors.startDate ? "input-error" : ""
+                        }`}
                         placeholder="Chọn ngày bắt đầu"
                         showIcon
                     />
-                    {errors.startDate && <small className="text-red-500">{errors.startDate}</small>}
                 </div>
                 <div className="form-item">
                     <label className="heading-text">Đến ngày</label>
                     <Calendar
                         value={endDate}
-                        onChange={(e) => handleInputChange('endDate', e.value)}
+                        onChange={(e) => handleInputChange("endDate", e.value)}
                         dateFormat="dd/mm/yy"
-                        className={`date-input ${errors.endDate ? 'input-error' : ''}`}
+                        className={`date-input ${
+                            errors.endDate ? "input-error" : ""
+                        }`}
                         placeholder="Chọn ngày kết thúc"
                         showIcon
                     />
-                    {errors.endDate && <small className="text-red-500">{errors.endDate}</small>}
                 </div>
                 <div className="form-item">
                     <label className="heading-text">Tra cứu theo</label>
                     <Dropdown
                         value={searchType}
                         options={searchTypes}
-                        onChange={(e) => handleInputChange('searchType', e.value)}
-                        className={`w-full ${errors.searchType ? 'input-error' : ''}`}
+                        onChange={(e) => handleInputChange("searchType", e.value)}
+                        className={`w-full ${
+                            errors.searchType ? "input-error" : ""
+                        }`}
                         placeholder="Chọn hình thức tra cứu"
                         filter
                         filterPlaceholder="Tìm kiếm..."
                     />
-                    {errors.searchType && <small className="text-red-500">{errors.searchType}</small>}
                 </div>
                 <div className="form-item">
                     <label className="heading-text">Thông tin tra cứu</label>
                     {renderSearchInput()}
                 </div>
             </div>
-
             <form onSubmit={handleSubmit}>
                 <div className="pt-4">
                     <button
