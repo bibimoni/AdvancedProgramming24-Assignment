@@ -55,7 +55,7 @@ function App() {
                 if (searchParams.type === "transaction") {
                     items = items.filter(
                         (item) =>
-                            item.trans_no && item.trans_no === searchParams.value
+                            item.trans_no && String(item.trans_no) === String(searchParams.value)
                     );
                 } else if (searchParams.type === "income") {
                     items = items.filter(
