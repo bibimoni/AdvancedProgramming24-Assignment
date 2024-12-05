@@ -76,17 +76,17 @@ const StatementTable = ({ data = [] }) => {
         <div className="flex flex-col items-center justify-center py-12 text-gray-500">
             <i className="pi pi-search text-5xl mb-4 opacity-50"></i>
             <span className="text-xl font-medium">Không tìm thấy giao dịch</span>
-            <span className="text-sm mt-2 text-gray-400">Vui lòng điều chỉnh tiêu chí tìm kiếm</span>
+            <span className="text-sm mt-2 text-gray-400">Vui lòng điều chỉnh thông tin tìm kiếm</span>
         </div>
     );
 
     const CustomPagination = () => {
         const pageNumbers = [];
-        const maxPagesToShow = 5; // Tổng số nút hiển thị (bao gồm trang hiện tại)
+        const maxPagesToShow = 5;
     
         const halfRange = Math.floor(maxPagesToShow / 2);
-        const startPage = Math.max(1, currentPage - halfRange); // Trang bắt đầu
-        const endPage = Math.min(totalPages, currentPage + halfRange); // Trang kết thúc
+        const startPage = Math.max(1, currentPage - halfRange);
+        const endPage = Math.min(totalPages, currentPage + halfRange);
     
         for (let i = startPage; i <= endPage; i++) {
             pageNumbers.push(i);
