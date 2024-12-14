@@ -141,7 +141,7 @@ class BoyerMoore {
       let boyerMoore = new BoyerMoore();
       results = this.inputData.filter(
         (row) =>
-          boyerMoore.implement(row.detail, key) != -1
+          boyerMoore.implement(row.detail.toLowerCase(), key.toLowerCase()) != -1
       );
       return results;
     }
