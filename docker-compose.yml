@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090" # Map port 9090 on the host to port 9090 in the container
+    volumes:
+      - ./backend:/app/backend # Sync backend folder with container
+      - ./chuyen_khoan.csv:/app/chuyen_khoan.csv # Map the root file directly into the container
+      - /app/backend/node_modules # Prevent overwriting node_modules
+    environment:
+      NODE_ENV: development # Optional: set environment variables
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # Map React app to port 3000
+    volumes:
+      - ./frontend:/app # Sync frontend folder with container (optional for dev)
+    environment:
+      NODE_ENV: production

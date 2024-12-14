@@ -1,7 +1,7 @@
 const cors = require('cors');
 const express = require('express');
 
-const PORT = 8080;
+const PORT = 9090;
 const app = express();
 const { DataHandler } = require('./processData');
 
@@ -18,18 +18,20 @@ const apiHandler = (item) => {
   });
 
   // /item?key=
-  app.get('/item', (req, res) => {
-    const key = req.query.key;
+  app.get('/query', (req, res) => {
+    const key = req.query.q;
     if (key == undefined) {
       res.status(200).send({
         "comment:": "invalid key"
       })
     } else {
-      res.status(200).send(
-        dataHandler.searchByDetail({
-          key: key
-        })
-      )
+      let ret = dataHandler.searchByDetail({
+        key: key
+      });
+      res.status(200).send({
+        total : ret.length,
+        items: ret,
+      })
     }
   });
 

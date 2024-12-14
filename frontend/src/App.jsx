@@ -38,7 +38,7 @@ function App() {
             let items = [];
     
             if (searchParams.dateRange && searchParams.dateRange.length === 2 && !searchParams.type) {
-                url = `http://localhost:8080/item/date?from=${searchParams.dateRange[0]}&to=${searchParams.dateRange[1]}`;
+                url = `http://localhost:9090/item/date?from=${searchParams.dateRange[0]}&to=${searchParams.dateRange[1]}`;
                 response = await fetch(url);
                 if (!response.ok) throw new Error(`API error: ${response.statusText}`);
                 data = await response.json();
@@ -46,7 +46,7 @@ function App() {
             }
     
             if (searchParams.dateRange && searchParams.dateRange.length === 2 && searchParams.type) {
-                url = `http://localhost:8080/item/date?from=${searchParams.dateRange[0]}&to=${searchParams.dateRange[1]}`;
+                url = `http://localhost:9090/item/date?from=${searchParams.dateRange[0]}&to=${searchParams.dateRange[1]}`;
                 response = await fetch(url);
                 if (!response.ok) throw new Error(`API error: ${response.statusText}`);
                 data = await response.json();
@@ -78,13 +78,13 @@ function App() {
             // Nếu chỉ có type mà không có dateRange
             if (searchParams.type && !searchParams.dateRange) {
                 if (searchParams.type === "transaction") {
-                    url = `http://localhost:8080/item/transno?from=${searchParams.value}&to=${searchParams.value}`;
+                    url = `http://localhost:9090/item/transno?from=${searchParams.value}&to=${searchParams.value}`;
                 } else if (searchParams.type === "income") {
-                    url = `http://localhost:8080/item/credit?from=${searchParams.value}&to=${searchParams.value}`;
+                    url = `http://localhost:9090/item/credit?from=${searchParams.value}&to=${searchParams.value}`;
                 } else if (searchParams.type === "outcome") {
-                    url = `http://localhost:8080/item/debit?from=${searchParams.value}&to=${searchParams.value}`;
+                    url = `http://localhost:9090/item/debit?from=${searchParams.value}&to=${searchParams.value}`;
                 } else if (searchParams.type === "detail") {
-                    url = `http://localhost:8080/item?key=${searchParams.value}`;
+                    url = `http://localhost:9090/query?q=${searchParams.value}`;
                 }
                 response = await fetch(url);
                 if (!response.ok) throw new Error(`API error: ${response.statusText}`);
