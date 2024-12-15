@@ -1,7 +1,6 @@
-version: '3.8'
-
 services:
   backend:
+    image: bibimoni/saoke-backend:lastest
     build:
       context: .
       dockerfile: Dockerfile
@@ -13,7 +12,9 @@ services:
       - /app/backend/node_modules # Prevent overwriting node_modules
     environment:
       NODE_ENV: development # Optional: set environment variables
+    container_name: saoke-backend
   frontend:
+    image: bibimoni/saoke-frontend:lastest
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -23,3 +24,6 @@ services:
       - ./frontend:/app # Sync frontend folder with container (optional for dev)
     environment:
       NODE_ENV: production
+    depends_on:
+      - backend
+    container_name: saoke-frontend
